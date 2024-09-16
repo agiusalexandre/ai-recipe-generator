@@ -4,6 +4,7 @@ import { Tabs, Tab, Box } from "@mui/material";
 import "./App.css";
 import { Amplify } from "aws-amplify";
 import { Schema } from "../amplify/data/resource";
+import { firstBucket } from "../amplify/storage/resource";
 import { generateClient } from "aws-amplify/data";
 import outputs from "../amplify_outputs.json";
 import { FileUploader } from '@aws-amplify/ui-react-storage';
@@ -20,9 +21,15 @@ function App() {
   const [result, setResult] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [tabValue, setTabValue] = useState(0);
+  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
+  };
+
+  const handleUploadSuccess = (data: { key: string }) => {
+    setUploadedFiles(prev => [...prev, data.key]);
+    alert('File uploaded successfully!');
   };
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -43,7 +50,12 @@ function App() {
       }
 
     } catch (e) {
-      alert(`An error occurred: ${e}`);
+      console.error('Error in onSubmit:', e);
+      if (e instanceof Error) {
+        setResult(`An error occurred: ${e.message}`);
+      } else {
+        setResult('An unexpected error occurred. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -59,7 +71,15 @@ function App() {
         </h1>
       </div>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={tabValue} onChange={handleTabChange} aria-label="app tabs">
+        <Tabs 
+          value={tabValue} 
+          onChange={handleTabChange} 
+          aria-label="app tabs"
+          sx={{
+            '& .MuiTab-root': { color: 'grey' },
+            '& .Mui-selected': { color: 'primary.main', fontWeight: 'bold' },
+          }}
+        >
           <Tab label="Generate Recipe" />
           <Tab label="Upload Images" />
           <Tab label="About" />
@@ -104,13 +124,24 @@ function App() {
         )}
         {tabValue === 1 && (
           <div>
-            <h2>Saved Recipes</h2>
+            <h2>Upload and View Images</h2>
             <FileUploader
               acceptedFileTypes={['image/*']}
               path={({ identityId }) => `protected/${identityId}/`}
               maxFileCount={1}
               isResumable
+              onSuccess={handleUploadSuccess}
             />
+            {uploadedFiles.length > 0 && (
+              <div>
+                <h3>Uploaded Images:</h3>
+                <ul>
+                  {uploadedFiles.map((file, index) => (
+                    <li key={index}>{file}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         )}
         {tabValue === 2 && (
