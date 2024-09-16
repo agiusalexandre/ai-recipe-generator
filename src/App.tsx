@@ -4,7 +4,6 @@ import { Tabs, Tab, Box } from "@mui/material";
 import "./App.css";
 import { Amplify } from "aws-amplify";
 import { Schema } from "../amplify/data/resource";
-import { firstBucket } from "../amplify/storage/resource";
 import { generateClient } from "aws-amplify/data";
 import outputs from "../amplify_outputs.json";
 import { FileUploader } from '@aws-amplify/ui-react-storage';
@@ -21,8 +20,7 @@ function App() {
   const [result, setResult] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [tabValue, setTabValue] = useState(0);
-  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
-
+  
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
