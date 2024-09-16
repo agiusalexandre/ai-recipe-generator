@@ -124,16 +124,6 @@ function App() {
               maxFileCount={1}
               isResumable
             />
-            {uploadedFiles.length > 0 && (
-              <div>
-                <h3>Uploaded Images:</h3>
-                <ul>
-                  {uploadedFiles.map((file, index) => (
-                    <li key={index}>{file}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </div>
         )}
         {tabValue === 2 && (
