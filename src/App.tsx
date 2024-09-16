@@ -21,9 +21,6 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
-  };
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -66,7 +63,6 @@ function App() {
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs 
           value={tabValue} 
-          onChange={handleTabChange} 
           aria-label="app tabs"
           sx={{
             '& .MuiTab-root': { color: 'grey' },
