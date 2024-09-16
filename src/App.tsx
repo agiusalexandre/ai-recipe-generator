@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import React, { FormEvent, useState } from "react";
 import { Loader, Placeholder } from "@aws-amplify/ui-react";
 import { Tabs, Tab, Box } from "@mui/material";
 import "./App.css";
@@ -19,8 +19,13 @@ const amplifyClient = generateClient<Schema>({
 function App() {
   const [result, setResult] = useState<string>("");
   const [loading, setLoading] = useState(false);
-  const [tabValue] = useState(0);
-  
+  const [tabValue, setTabValue] = useState(0);
+  const [uploadedFiles] = useState<string[]>([]);
+
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
+
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -62,7 +67,8 @@ function App() {
       </div>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs 
-          value={tabValue} 
+          value={tabValue}
+          onChange={handleTabChange} 
           aria-label="app tabs"
           sx={{
             '& .MuiTab-root': { color: 'grey' },
@@ -116,10 +122,20 @@ function App() {
             <h2>Upload and View Images</h2>
             <FileUploader
               acceptedFileTypes={['image/*']}
-              path={({ identityId }) => `protected/${identityId}/`}
+              path="public/"
               maxFileCount={1}
               isResumable
             />
+            {uploadedFiles.length > 0 && (
+              <div>
+                <h3>Uploaded Images:</h3>
+                <ul>
+                  {uploadedFiles.map((file, index) => (
+                    <li key={index}>{file}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         )}
         {tabValue === 2 && (
