@@ -130,7 +130,6 @@ function App() {
               path={({ identityId }) => `protected/${identityId}/`}
               maxFileCount={1}
               isResumable
-              onSuccess={handleUploadSuccess}
             />
             {uploadedFiles.length > 0 && (
               <div>
