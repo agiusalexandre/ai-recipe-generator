@@ -7,6 +7,8 @@ import { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 import outputs from "../amplify_outputs.json";
 import { FileUploader } from '@aws-amplify/ui-react-storage';
+import { uploadData } from 'aws-amplify/storage';
+
 
 import "@aws-amplify/ui-react/styles.css";
 
