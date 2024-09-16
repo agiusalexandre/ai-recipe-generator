@@ -123,7 +123,7 @@ function App() {
             <h2>Upload and View Images</h2>
             <FileUploader
               acceptedFileTypes={['image/*']}
-              path="public/"
+              path="media/*"
               maxFileCount={1}
               isResumable
             />
