@@ -27,11 +27,6 @@ function App() {
     setTabValue(newValue);
   };
 
-  const handleUploadSuccess = (data: { key: string }) => {
-    setUploadedFiles(prev => [...prev, data.key]);
-    alert('File uploaded successfully!');
-  };
-
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
