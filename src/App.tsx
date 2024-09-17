@@ -9,6 +9,7 @@ import outputs from "../amplify_outputs.json";
 import { FileUploader } from '@aws-amplify/ui-react-storage';
 
 
+
 import "@aws-amplify/ui-react/styles.css";
 
 Amplify.configure(outputs);
@@ -123,9 +124,10 @@ function App() {
             <h2>Upload and View Images</h2>
             <FileUploader
               acceptedFileTypes={['image/*']}
-              path="private/{entity_id}/*"
-              maxFileCount={1}
+              path="media/*"
+              maxFileCount={4}
               isResumable
+              autoUpload={false}
             />
             {uploadedFiles.length > 0 && (
               <div>
