@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useState, useEffect} from "react";
 import { Loader, Placeholder } from "@aws-amplify/ui-react";
 import { Tabs, Tab, Box } from "@mui/material";
 import "./App.css";
@@ -23,6 +23,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [uploadedFiles] = useState<string[]>([]);
+  const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -56,8 +57,25 @@ function App() {
     } finally {
       setLoading(false);
     }
+    
+
   };
 
+  useEffect(() => {
+    amplifyClient.models.Todo.observeQuery().subscribe({
+      next: (data) => setTodos([...data.items]),
+    });
+  }, []);
+
+  function createTodo() {
+    amplifyClient.models.Todo.create({ content: window.prompt("Todo content") });
+  }
+
+
+  function deleteTodo(id: string) {
+    amplifyClient.models.Todo.delete({ id })
+  }
+  
   return (
     <div className="app-container">
       <div className="header-container">
@@ -142,7 +160,17 @@ function App() {
           </div>
         )}
         {tabValue === 2 && (
-          <p>Recipe AI is your personal cooking assistant powered by artificial intelligence.</p>
+
+          <div>
+                <h1>My todos</h1>
+                <button onClick={createTodo}>+ new</button>
+                <ul>
+                  {todos.map((todo) => (
+                    <li onClick={() => deleteTodo(todo.id)} key={todo.id}>{todo.content}</li>
+                  ))}
+                </ul>
+          </div>
+
         )}
       </Box>
     </div>
