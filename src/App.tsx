@@ -8,50 +8,28 @@ import { FileUploader } from '@aws-amplify/ui-react-storage';
 import "@aws-amplify/ui-react/styles.css";
 
 
-const amplifyClient = generateClient<Schema>({
+const client = generateClient<Schema>({
   authMode: "userPool",
 });
-
-
-
 
 function App() {
   const [result, setResult] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [uploadedFiles] = useState<string[]>([]);
-  const [todos, setTodos] = useState<Schema["Todo"]["type"][]>([]);
+  const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
 
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
-  useEffect(() => {
-    const sub = amplifyClient.models.Todo.observeQuery().subscribe({
-      next: ({ items }) => {
-        setTodos([...items]);
-      },
-    });
+  function createTodo() {
+    client.models.Todo.create({ content: window.prompt("Todo content") });
+  }
 
-    return () => sub.unsubscribe();
-  }, []);
-
-
-  const createTodo = async () => {
-    const content = window.prompt("Todo content");
-    if (content) {
-      try {
-        await amplifyClient.models.Todo.create({
-          content: content,
-          isDone: false,
-        });
-        console.log("Todo created successfully");
-      } catch (error) {
-        console.error("Error creating todo:", error);
-        alert("Failed to create todo. Please try again.");
-      }
-    }
+  function deleteTodo(id: string) {
+    client.models.Todo.delete({ id })
   }
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -61,7 +39,7 @@ function App() {
     try {
       const formData = new FormData(event.currentTarget);
 
-      const { data, errors } = await amplifyClient.queries.askBedrock({
+      const { data, errors } = await client.queries.askBedrock({
         ingredients: [formData.get("ingredients")?.toString() || ""],
       });
 
@@ -170,10 +148,11 @@ function App() {
         )}
         {tabValue === 2 && (
           <div>
-            <button onClick={createTodo}>Add new todo</button>
+            <h1>My todos</h1>
+            <button onClick={createTodo}>+ new</button>
             <ul>
-              {todos.map(({ id, content }) => (
-                <li key={id}>{content}</li>
+              {todos.map((todo) => (
+                <li onClick={() => deleteTodo(todo.id)} key={todo.id}>{todo.content}</li>
               ))}
             </ul>
           </div>
