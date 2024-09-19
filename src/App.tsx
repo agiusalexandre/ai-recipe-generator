@@ -2,17 +2,11 @@ import React, { FormEvent, useState} from "react";
 import { Loader, Placeholder } from "@aws-amplify/ui-react";
 import { Tabs, Tab, Box } from "@mui/material";
 import "./App.css";
-import { Amplify } from "aws-amplify";
 import { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
-import outputs from "../amplify_outputs.json";
 import { FileUploader } from '@aws-amplify/ui-react-storage';
-
-
-
 import "@aws-amplify/ui-react/styles.css";
 
-Amplify.configure(outputs);
 
 const amplifyClient = generateClient<Schema>({
   authMode: "userPool",
@@ -28,7 +22,12 @@ function App() {
     setTabValue(newValue);
   };
 
-
+  const createTodo = async () => {
+    await amplifyClient.models.Todo.create({
+      content: window.prompt("Todo content?"),
+      isDone: false
+    })
+  }
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
@@ -81,7 +80,7 @@ function App() {
         >
           <Tab label="Generate Recipe" />
           <Tab label="Upload Images" />
-          <Tab label="About" />
+          <Tab label="Add Vehicule" />
         </Tabs>
       </Box>
       <Box sx={{ padding: 2 }}>
@@ -144,7 +143,12 @@ function App() {
           </div>
         )}
         {tabValue === 2 && (
-          <div></div> 
+          <div>
+
+              <button onClick={createTodo}>Add vehicule</button>
+
+
+          </div> 
         )}
       </Box>
     </div>
