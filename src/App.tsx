@@ -27,12 +27,6 @@ function App() {
     setTabValue(newValue);
   };
 
-  const fetchTodos = async () => {
-    const { data: items, errors } = await amplifyClient.models.Todo.list();
-    setTodos(items);
-  };
-
-
   useEffect(() => {
     const sub = amplifyClient.models.Todo.observeQuery().subscribe({
       next: ({ items }) => {
@@ -45,11 +39,19 @@ function App() {
 
 
   const createTodo = async () => {
-    await amplifyClient.models.Todo.create({
-      content: window.prompt("Todo content?"),
-      isDone: false,
-    });
-
+    const content = window.prompt("Todo content");
+    if (content) {
+      try {
+        await amplifyClient.models.Todo.create({
+          content: content,
+          isDone: false,
+        });
+        console.log("Todo created successfully");
+      } catch (error) {
+        console.error("Error creating todo:", error);
+        alert("Failed to create todo. Please try again.");
+      }
+    }
   }
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -104,7 +106,7 @@ function App() {
         >
           <Tab label="Generate Recipe" />
           <Tab label="Upload Images" />
-          <Tab label="Add Vehicule" />
+          <Tab label="Add Todo" />
         </Tabs>
       </Box>
       <Box sx={{ padding: 2 }}>
