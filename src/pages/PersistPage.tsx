@@ -13,7 +13,6 @@ const client = generateClient<Schema>({
 const PersistPage: React.FC = () => {
     const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
 
-
     useEffect(() => {
         client.models.Todo.observeQuery().subscribe({
             next: (data) => setTodos([...data.items]),

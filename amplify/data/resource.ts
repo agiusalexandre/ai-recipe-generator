@@ -16,7 +16,7 @@ const schema = a.schema({
       a.handler.custom({ entry: "./bedrock.js", dataSource: "bedrockDS" })
     ),
 
-    Todo: a
+  Todo: a
     .model({
       content: a.string(),
     })

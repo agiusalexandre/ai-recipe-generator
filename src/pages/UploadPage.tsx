@@ -6,9 +6,6 @@ import "@aws-amplify/ui-react/styles.css";
 
 const UploadPage: React.FC = () => {
     const [uploadedFiles] = useState<string[]>([]);
-
-
-
     return (
         <div className="app-container">
             <div className="header-container">
