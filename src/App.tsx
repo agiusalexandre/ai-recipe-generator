@@ -14,8 +14,8 @@ const App: React.FC = () => {
 
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/Upload" element={<PersistPage />} />
-        <Route path="/Persist" element={<UploadPage />} />
+        <Route path="/Upload" element={<UploadPage />} />
+        <Route path="/Persist" element={<PersistPage />} />
       </Routes>
     </Router>
   );
