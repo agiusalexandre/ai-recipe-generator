@@ -1,4 +1,4 @@
-import React, { FormEvent, useState} from "react";
+import React, { FormEvent, useState, useEffect } from "react";
 import { Loader, Placeholder } from "@aws-amplify/ui-react";
 import { Tabs, Tab, Box } from "@mui/material";
 import "./App.css";
@@ -12,22 +12,46 @@ const amplifyClient = generateClient<Schema>({
   authMode: "userPool",
 });
 
+
+
+
 function App() {
   const [result, setResult] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [uploadedFiles] = useState<string[]>([]);
+  const [todos, setTodos] = useState<Schema["Todo"]["type"][]>([]);
+
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
+  const fetchTodos = async () => {
+    const { data: items, errors } = await amplifyClient.models.Todo.list();
+    setTodos(items);
+  };
+
+
+  useEffect(() => {
+    const sub = amplifyClient.models.Todo.observeQuery().subscribe({
+      next: ({ items }) => {
+        setTodos([...items]);
+      },
+    });
+
+    return () => sub.unsubscribe();
+  }, []);
+
+
   const createTodo = async () => {
     await amplifyClient.models.Todo.create({
       content: window.prompt("Todo content?"),
-      isDone: false
-    })
+      isDone: false,
+    });
+
   }
+
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
@@ -55,7 +79,7 @@ function App() {
     } finally {
       setLoading(false);
     }
-    
+
 
   };
 
@@ -69,9 +93,9 @@ function App() {
         </h1>
       </div>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs 
+        <Tabs
           value={tabValue}
-          onChange={handleTabChange} 
+          onChange={handleTabChange}
           aria-label="app tabs"
           sx={{
             '& .MuiTab-root': { color: 'grey' },
@@ -144,11 +168,13 @@ function App() {
         )}
         {tabValue === 2 && (
           <div>
-
-              <button onClick={createTodo}>Add vehicule</button>
-
-
-          </div> 
+            <button onClick={createTodo}>Add new todo</button>
+            <ul>
+              {todos.map(({ id, content }) => (
+                <li key={id}>{content}</li>
+              ))}
+            </ul>
+          </div>
         )}
       </Box>
     </div>
