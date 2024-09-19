@@ -16,3 +16,12 @@ export const secondBucket = defineStorage({
     ]
   })
 })
+
+export const storage = defineStorage({
+  name: "predictions_gen2",
+  access: allow => ({
+    'public/*': [
+      allow.guest.to(['list', 'write', 'get'])
+    ]
+  })
+})

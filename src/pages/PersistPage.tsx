@@ -7,7 +7,6 @@ import "@aws-amplify/ui-react/styles.css";
 
 
 const client = generateClient<Schema>({
-    authMode: "userPool",
 });
 
 const PersistPage: React.FC = () => {

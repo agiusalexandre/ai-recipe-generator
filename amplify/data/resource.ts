@@ -21,6 +21,20 @@ const schema = a.schema({
       content: a.string(),
     })
     .authorization((allow) => [allow.publicApiKey()]),
+
+  identifyText: a
+    .query()
+    .arguments({
+      path: a.string(),
+    })
+    .returns(a.string())
+    .authorization((allow) => [allow.publicApiKey()])
+    .handler(
+      a.handler.custom({
+        entry: "./identifyText.js",
+        dataSource: "RekognitionDataSource",
+      })
+    ),
 });
 
 export type Schema = ClientSchema<typeof schema>;

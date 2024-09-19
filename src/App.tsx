@@ -5,6 +5,8 @@ import { AppBar, Toolbar, Button, Typography, Container, ThemeProvider, createTh
 import HomePage from './pages/HomePage';
 import PersistPage from './pages/PersistPage';
 import UploadPage from './pages/UploadPage';
+import RecognitionPage from './pages/RecognitionPage';
+
 
 const theme = createTheme({
   palette: {
@@ -78,6 +80,19 @@ const App: React.FC = () => {
               >
                 Persist
               </Button>
+              <Button
+                color="inherit"
+                component={Link}
+                to="/Recognition"
+                sx={{
+                  mx: 1,
+                  fontWeight: 'bold',
+                  transition: 'all 0.3s',
+                  '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)', transform: 'translateY(-2px)' }
+                }}
+              >
+                Recognition
+              </Button>
             </div>
           </Toolbar>
         </AppBar>
@@ -86,6 +101,7 @@ const App: React.FC = () => {
             <Route path="/" element={<HomePage />} />
             <Route path="/Upload" element={<UploadPage />} />
             <Route path="/Persist" element={<PersistPage />} />
+            <Route path="/Recognition" element={<RecognitionPage />} />
           </Routes>
         </Container>
       </Router>
