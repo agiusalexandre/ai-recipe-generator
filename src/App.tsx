@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useState, useEffect } from "react";
 import { Loader, Placeholder } from "@aws-amplify/ui-react";
 import { Tabs, Tab, Box } from "@mui/material";
 import "./App.css";
@@ -17,12 +17,18 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [uploadedFiles] = useState<string[]>([]);
-  const [todos] = useState<Array<Schema["Todo"]["type"]>>([]);
+  const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
 
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
+
+  useEffect(() => {
+    client.models.Todo.observeQuery().subscribe({
+      next: (data) => setTodos([...data.items]),
+    });
+  }, []);
 
   function createTodo() {
     client.models.Todo.create({ content: window.prompt("Todo content") });
