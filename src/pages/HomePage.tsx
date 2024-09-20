@@ -50,11 +50,11 @@ const HomePage: React.FC = () => {
                 Meet Your Personal
                 <br />
                 <Typography component="span" variant="h2" sx={{ color: 'secondary.main', fontWeight: 'bold' }}>
-                    Recipe AI
+                    Vehicule AI
                 </Typography>
             </Typography>
             <Typography variant="body1" sx={{ mb: 3, color: 'text.secondary' }}>
-                Simply type a few ingredients, and Recipe AI will generate a unique recipe just for you!
+                Simply type a few vehiocule information, and Vehicule AI will generate recommandation just for you!
             </Typography>
             <Box component="form" onSubmit={onSubmit} sx={{ mb: 4 }}>
                 <TextField
@@ -63,7 +63,7 @@ const HomePage: React.FC = () => {
                     name="ingredients"
                     value={ingredients}
                     onChange={(e) => setIngredients(e.target.value)}
-                    placeholder="Ingredient1, Ingredient2, Ingredient3, etc..."
+                    placeholder="Vehicule Type, Transmission Type, Favorites Brand"
                     variant="outlined"
                     sx={{ mb: 2 }}
                     inputProps={{
@@ -89,7 +89,7 @@ const HomePage: React.FC = () => {
                             transition: 'all 0.3s'
                         }}
                     >
-                        {loading ? 'Generating...' : 'Generate Recipe'}
+                        {loading ? 'Generating...' : 'Generate Recommandations'}
                     </Button>
                     <Button
                         type="button"

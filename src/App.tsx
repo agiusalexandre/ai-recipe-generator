@@ -60,7 +60,7 @@ const App: React.FC = () => {
           <Container maxWidth="lg">
             <Toolbar sx={{ justifyContent: 'space-between' }}>
               <Typography variant="h6" component={Link} to="/" sx={{ fontWeight: 'bold', fontSize: '1.8rem', color: 'white', textDecoration: 'none' }}>
-                Recipe AI
+                Vehicule AI
               </Typography>
               <Box sx={{ display: 'flex' }}>
                 {['Home', 'Upload', 'Persist', 'Recognition'].map((text, index) => (
@@ -111,7 +111,7 @@ const App: React.FC = () => {
         <Box component="footer" sx={{ bgcolor: 'background.paper', py: 6, mt: 'auto' }}>
           <Container maxWidth="lg">
             <Typography variant="body2" color="text.secondary" align="center">
-              © {new Date().getFullYear()} Recipe AI. All rights reserved.
+              © {new Date().getFullYear()} Vehicule AI. All rights reserved.
             </Typography>
           </Container>
         </Box>

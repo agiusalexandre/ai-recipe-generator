@@ -1,8 +1,8 @@
 export function request(ctx) {
-    const { ingredients = [] } = ctx.args;
+    const { informations = [] } = ctx.args;
   
-    // Construct the prompt with the provided ingredients
-    const prompt = `Suggest a recipe idea using these ingredients: ${ingredients.join(", ")}.`;
+    // Construct the prompt with the provided informations
+    const prompt = `Suggest recommandation idea using these vehicule information: ${informations.join(", ")}.`;
   
     // Return the request configuration
     return {

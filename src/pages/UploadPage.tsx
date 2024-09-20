@@ -12,7 +12,7 @@ const UploadPage: React.FC = () => {
                 <h1 className="main-header">
                     Meet Your Personal
                     <br />
-                    <span className="highlight">Recipe AI</span>
+                    <span className="highlight">Vehicule AI</span>
                 </h1>
             </div>
             <Box>
