@@ -12,6 +12,7 @@ const client = generateClient<Schema>();
 type IdentifyTextReturnType = Schema["identifyText"]["returnType"];
 
 
+
 const RecognitionPage: React.FC = () => {
 
     // State to hold the recognized text

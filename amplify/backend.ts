@@ -39,7 +39,7 @@ const dataStack = Stack.of(backend.data)
 
 // Set environment variables for the S3 Bucket name
 backend.data.resources.cfnResources.cfnGraphqlApi.environmentVariables = {
- S3_BUCKET_NAME: backend.storage.resources.bucket.bucketName,
+ S3_BUCKET_NAME: backend.firstBucket.resources.bucket.bucketName,
 };
 
 const rekognitionDataSource = backend.data.addHttpDataSource(
@@ -60,6 +60,6 @@ rekognitionDataSource.grantPrincipal.addToPrincipalPolicy(
  })
 );
 
-backend.storage.resources.bucket.grantReadWrite(
+backend.firstBucket.resources.bucket.grantReadWrite(
  rekognitionDataSource.grantPrincipal
 );
