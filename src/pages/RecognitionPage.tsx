@@ -23,7 +23,7 @@ const RecognitionPage: React.FC = () => {
         if (event.target.files) {
             const file = event.target.files[0];
 
-            const s3Path = "public/" + file.name;
+            const s3Path = "media/" + file.name;
 
             try {
                 uploadData({

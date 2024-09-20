@@ -28,7 +28,7 @@ const schema = a.schema({
       path: a.string(),
     })
     .returns(a.string())
-    .authorization((allow) => [allow.publicApiKey()])
+    .authorization((allow) => [allow.authenticated()])
     .handler(
       a.handler.custom({
         entry: "./identifyText.js",
