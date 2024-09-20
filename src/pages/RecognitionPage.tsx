@@ -41,11 +41,26 @@ const RecognitionPage: React.FC = () => {
 
     // Function to recognize text from the uploaded image
     const recognizeText = async () => {
-        // Identifying text in the uploaded image
-        const { data } = await client.queries.identifyText({
-            path, // File name
-        });
-        setTextData(data);
+        try {
+            // Identifying text in the uploaded image
+            const { data, errors } = await client.queries.identifyText({
+                path: path, // File name
+            });
+            if (!errors) {
+                setTextData(data);
+            } else {
+                console.log(errors);
+            }
+        } catch (e) {
+            console.error('Error in onSubmit:', e);
+            if (e instanceof Error) {
+                setTextData(`An error occurred: ${e.message}`);
+            } else {
+                setTextData('An unexpected error occurred. Please try again.');
+            }
+        } finally {
+            //setLoading(false);
+        }
     };
 
     return (
