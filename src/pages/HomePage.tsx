@@ -12,7 +12,7 @@ const HomePage: React.FC = () => {
     const [result, setResult] = useState<string>("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [ingredients, setIngredients] = useState("");
+    const [informations, setInformations] = useState("");
 
     const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -21,7 +21,7 @@ const HomePage: React.FC = () => {
 
         try {
             const { data, errors } = await client.queries.askBedrock({
-                ingredients: [ingredients],
+                informations: [informations],
             });
 
             if (!errors) {
@@ -39,7 +39,7 @@ const HomePage: React.FC = () => {
     };
 
     const handleClear = () => {
-        setIngredients("");
+        setInformations("");
         setResult("");
         setError(null);
     };
@@ -61,8 +61,8 @@ const HomePage: React.FC = () => {
                     fullWidth
                     id="ingredients"
                     name="ingredients"
-                    value={ingredients}
-                    onChange={(e) => setIngredients(e.target.value)}
+                    value={informations}
+                    onChange={(e) => setInformations(e.target.value)}
                     placeholder="Vehicule Type, Transmission Type, Favorites Brand"
                     variant="outlined"
                     sx={{ mb: 2 }}
@@ -76,7 +76,7 @@ const HomePage: React.FC = () => {
                         variant="contained"
                         color="primary"
                         size="large"
-                        disabled={loading || !ingredients.trim()}
+                        disabled={loading || !informations.trim()}
                         startIcon={loading && <CircularProgress size={20} color="inherit" />}
                         sx={{ 
                             py: 1.5, 
