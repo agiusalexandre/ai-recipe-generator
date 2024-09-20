@@ -3,8 +3,6 @@ import { data } from "./data/resource";
 import { firstBucket} from "./storage/resource";
 import { PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { auth } from "./auth/resource";
-import { Stack } from 'aws-cdk-lib';
-
 
 const backend = defineBackend({
   auth,
@@ -32,8 +30,6 @@ bedrockDataSource.grantPrincipal.addToPrincipalPolicy(
     
   })
 );
-
-const dataStack = Stack.of(backend.data)
 
 // Set environment variables for the S3 Bucket name
 backend.data.resources.cfnResources.cfnGraphqlApi.environmentVariables = {
