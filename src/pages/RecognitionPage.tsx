@@ -6,8 +6,9 @@ import { uploadData } from "aws-amplify/storage";
 import "../App.css";
 import "@aws-amplify/ui-react/styles.css";
 
-// Generating the client
-const client = generateClient<Schema>();
+const client = generateClient<Schema>({
+    authMode: "userPool",
+});
 
 type IdentifyTextReturnType = Schema["identifyText"]["returnType"];
 
