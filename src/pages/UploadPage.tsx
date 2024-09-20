@@ -21,7 +21,7 @@ const UploadPage: React.FC = () => {
                     <h2>Upload and View Images</h2>
                     <FileUploader
                         acceptedFileTypes={['image/*']}
-                        path="media/*"
+                        path="media/{entity_id}/"
                         maxFileCount={4}
                         isResumable
                         autoUpload={false}

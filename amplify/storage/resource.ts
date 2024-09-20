@@ -4,7 +4,7 @@ export const firstBucket = defineStorage({
   name: 'firstBucket',
   isDefault: true,
   access: (allow) => ({
-    'media/*': [allow.authenticated.to(['read', 'write', 'delete'])],
+    'media/{entity_id}/*': [allow.authenticated.to(['read', 'write', 'delete'])],
     'public/*': [
       allow.guest.to(['list', 'write', 'get'])
     ]
