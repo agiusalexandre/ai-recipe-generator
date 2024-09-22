@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage';
 import PersistPage from './pages/PersistPage';
 import UploadPage from './pages/UploadPage';
 import RecognitionPage from './pages/RecognitionPage';
+import ChatPage from './pages/ChatPage';
 
 
 const theme = createTheme({
@@ -63,7 +64,7 @@ const App: React.FC = () => {
                 Vehicule AI
               </Typography>
               <Box sx={{ display: 'flex' }}>
-                {['Home', 'Upload', 'Persist', 'Recognition'].map((text, index) => (
+                {['Home', 'Upload', 'Persist', 'Recognition', 'Chat'].map((text, index) => (
                   <Button
                     key={text}
                     color="inherit"
@@ -105,6 +106,7 @@ const App: React.FC = () => {
               <Route path="/Upload" element={<UploadPage />} />
               <Route path="/Persist" element={<PersistPage />} />
               <Route path="/Recognition" element={<RecognitionPage />} />
+              <Route path="/Chat" element={<ChatPage />} />
             </Routes>
           </Box>
         </Container>
