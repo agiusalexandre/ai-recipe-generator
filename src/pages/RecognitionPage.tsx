@@ -75,12 +75,12 @@ const RecognitionPage: React.FC = () => {
             </div>
             <Box>
                 <div>
-                    <h1>Amazon Rekognition Text Recognition</h1>
+                    <h1>License Plate Recognition</h1>
                     <div>
                         <input type="file" onChange={handleTranslate} />
-                        <button onClick={recognizeText}>Recognize Text</button>
+                        <button onClick={recognizeText}>Recognize Plate</button>
                         <div>
-                            <h3>Recognized Text:</h3>
+                            <h3>Plate number:</h3>
                             {textData}
                         </div>
                     </div>

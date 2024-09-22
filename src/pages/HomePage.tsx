@@ -3,7 +3,6 @@ import { Box, Button, TextField, Typography, Paper, CircularProgress } from "@mu
 import { Schema } from "../../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 
-
 const client = generateClient<Schema>({
     authMode: "userPool",
 });
@@ -27,7 +26,7 @@ const HomePage: React.FC = () => {
             if (!errors) {
                 setResult(data?.body || "No data returned");
             } else {
-                setError("An error occurred while generating the recipe. Please try again.");
+                setError("An error occurred while generating the recommendation. Please try again.");
                 console.log(errors);
             }
         } catch (e) {
@@ -54,7 +53,7 @@ const HomePage: React.FC = () => {
                 </Typography>
             </Typography>
             <Typography variant="body1" sx={{ mb: 3, color: 'text.secondary' }}>
-                Simply type a few vehiocule information, and Vehicule AI will generate recommandation just for you!
+                Simply type a few vehicule information, and Vehicule AI will generate recommandation just for you!
             </Typography>
             <Box component="form" onSubmit={onSubmit} sx={{ mb: 4 }}>
                 <TextField
@@ -78,11 +77,11 @@ const HomePage: React.FC = () => {
                         size="large"
                         disabled={loading || !informations.trim()}
                         startIcon={loading && <CircularProgress size={20} color="inherit" />}
-                        sx={{ 
-                            py: 1.5, 
-                            px: 4, 
+                        sx={{
+                            py: 1.5,
+                            px: 4,
                             fontSize: '1.1rem',
-                            '&:hover': { 
+                            '&:hover': {
                                 backgroundColor: 'secondary.main',
                                 transform: 'scale(1.05)'
                             },
@@ -98,9 +97,9 @@ const HomePage: React.FC = () => {
                         size="large"
                         onClick={handleClear}
                         disabled={loading}
-                        sx={{ 
-                            py: 1.5, 
-                            px: 4, 
+                        sx={{
+                            py: 1.5,
+                            px: 4,
                             fontSize: '1.1rem',
                             transition: 'all 0.3s'
                         }}
@@ -117,7 +116,7 @@ const HomePage: React.FC = () => {
                 )}
                 {loading ? (
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <Typography variant="h6" sx={{ mb: 2 }}>Creating your recipe...</Typography>
+                        <Typography variant="h6" sx={{ mb: 2 }}>Creating your recommendation...</Typography>
                         <CircularProgress size={60} thickness={4} />
                     </Box>
                 ) : (

@@ -38,7 +38,7 @@ const PersistPage: React.FC = () => {
             </div>
             <Box>
                 <div>
-                    <h1>My todos</h1>
+                    <h1>My vehicule informations</h1>
                     <button onClick={createTodo}>+ new</button>
                     <ul>
                         {todos.map((todo) => (
