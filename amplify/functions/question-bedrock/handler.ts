@@ -10,7 +10,7 @@ import {Schema} from "../../data/resource";
 
 Amplify.configure(amplifyConfig)
 const graphQLClient = generateClient<Schema>();
-const ANALYSE_ANSWER_MODEL_ID = "TBD"
+const ANALYSE_ANSWER_MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0"
 const client = new BedrockRuntimeClient({region: "us-west-2"});
 
 export const handler: Handler = async (event, context) => {
@@ -25,7 +25,7 @@ export const handler: Handler = async (event, context) => {
     ];
 
     const input = {
-        modelId: process.env.ANALYSE_ANSWER_MODEL_ID,
+        modelId: ANALYSE_ANSWER_MODEL_ID,
         messages: conversation,
         inferenceConfig: {
             maxTokens: 1000,
