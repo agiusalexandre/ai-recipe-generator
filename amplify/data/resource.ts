@@ -6,7 +6,7 @@ const schema = a.schema({
     .query()
     .arguments({ prompt: a.string().required() })
     .returns(a.string())
-    .authorization((allow) => [allow.publicApiKey()])
+    .authorization((allow) => [allow.authenticated()])
     .handler(a.handler.function(questionEngineFunction)),
 
   publish: a.mutation()
@@ -16,7 +16,7 @@ const schema = a.schema({
     })
     .returns(a.ref('Message'))
     .handler(a.handler.custom({ entry: './publish.js' }))
-    .authorization(allow => [allow.publicApiKey()]),
+    .authorization(allow => [allow.authenticated()]),
 
   receive: a.subscription()
     // subscribes to the 'publish' mutation
@@ -24,7 +24,7 @@ const schema = a.schema({
     // subscription handler to set custom filters
     .handler(a.handler.custom({ entry: './receive.js' }))
     // authorization rules as to who can subscribe to the data
-    .authorization(allow => [allow.publicApiKey()]),
+    .authorization(allow => [allow.authenticated()]),
 
   Message: a.customType({
     content: a.string().required(),
