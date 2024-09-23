@@ -56,14 +56,14 @@ const ChatPage: React.FC = () => {
         //setError(null);
 
         try {
-            const { data, errors } = await client.queries.analyseAnswer({
-                informations: [inputMessage],
+            const { errors } = await client.queries.analyseAnswer({
+                prompt: inputMessage,
             });
 
             if (!errors) {
                 const aiResponse: Message = {
                     id: messages.length + 1,
-                    text: data?.body || "I'm sorry, I couldn't generate a response.",
+                    text: "I'm sorry, I couldn't generate a response.",
                     sender: 'ai',
                     timestamp: new Date(),
                 };
