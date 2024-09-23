@@ -1,6 +1,35 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
-
+import { questionEngineFunction } from "../functions/question-bedrock/resource"
 const schema = a.schema({
+
+  analyseAnswer: a
+    .query()
+    .arguments({ prompt: a.string().required() })
+    .returns(a.string())
+    .authorization((allow) => [allow.publicApiKey()])
+    .handler(a.handler.function(questionEngineFunction)),
+
+  publish: a.mutation()
+    .arguments({
+      channelName: a.string().required(),
+      content: a.string().required()
+    })
+    .returns(a.ref('Message'))
+    .handler(a.handler.custom({ entry: './publish.js' }))
+    .authorization(allow => [allow.publicApiKey()]),
+
+  receive: a.subscription()
+    // subscribes to the 'publish' mutation
+    .for(a.ref('publish'))
+    // subscription handler to set custom filters
+    .handler(a.handler.custom({ entry: './receive.js' }))
+    // authorization rules as to who can subscribe to the data
+    .authorization(allow => [allow.publicApiKey()]),
+
+  Message: a.customType({
+    content: a.string().required(),
+    channelName: a.string().required()
+  }),
 
   BedrockResponse: a.customType({
     body: a.string(),

@@ -25,9 +25,9 @@ const ChatPage: React.FC = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputMessage, setInputMessage] = useState("");
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    //const [error, setError] = useState<string | null>(null);
     const [selectedExpert, setSelectedExpert] = useState<AIExpert | null>(null);
-    const [suggestions, setSuggestions] = useState<string[]>([]);
+    const [suggestions] = useState<string[]>([]);
 
     const aiExperts: AIExpert[] = [
         { id: 1, name: "Vehicle Expert", avatar: "/avatars/vehicle-expert.png", expertise: "General vehicle knowledge" },
@@ -53,10 +53,10 @@ const ChatPage: React.FC = () => {
         setMessages(prevMessages => [...prevMessages, newUserMessage]);
         setInputMessage("");
         setLoading(true);
-        setError(null);
+        //setError(null);
 
         try {
-            const { data, errors } = await client.queries.askBedrock({
+            const { data, errors } = await client.queries.analyseAnswer({
                 informations: [inputMessage],
             });
 
@@ -68,35 +68,35 @@ const ChatPage: React.FC = () => {
                     timestamp: new Date(),
                 };
                 setMessages(prevMessages => [...prevMessages, aiResponse]);
-                generateSuggestions(inputMessage);
+                //generateSuggestions(inputMessage);
             } else {
-                setError("An error occurred while generating the response. Please try again.");
+                //setError("An error occurred while generating the response. Please try again.");
                 console.log(errors);
             }
         } catch (e) {
             console.error('Error in onSubmit:', e);
-            setError("An unexpected error occurred. Please try again.");
+            //setError("An unexpected error occurred. Please try again.");
         } finally {
             setLoading(false);
         }
     };
 
-    const handleClear = () => {
-        setMessages([]);
-        setInputMessage("");
-        setError(null);
-        setSuggestions([]);
-    };
+    // const handleClear = () => {
+    //     setMessages([]);
+    //     setInputMessage("");
+    //     //setError(null);
+    //     setSuggestions([]);
+    // };
 
-    const generateSuggestions = (message: string) => {
-        // This is a placeholder. In a real application, you would use a more sophisticated method to generate suggestions.
-        const dummySuggestions = [
-            "Tell me more about electric vehicles",
-            "What are the best practices for car maintenance?",
-            "How can I improve my vehicle's fuel efficiency?",
-        ];
-        setSuggestions(dummySuggestions);
-    };
+    // const generateSuggestions = (message: string) => {
+    //     // This is a placeholder. In a real application, you would use a more sophisticated method to generate suggestions.
+    //     const dummySuggestions = [
+    //         "Tell me more about electric vehicles",
+    //         "What are the best practices for car maintenance?",
+    //         "How can I improve my vehicle's fuel efficiency?",
+    //     ];
+    //     setSuggestions(dummySuggestions);
+    // };
 
     return (
         <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
