@@ -7,6 +7,7 @@ const client = generateClient<Schema>({
     authMode: "userPool",
 });
 
+
 interface Message {
     id: number;
     text: string;
@@ -37,7 +38,23 @@ const ChatPage: React.FC = () => {
 
     useEffect(() => {
         setSelectedExpert(aiExperts[0]);
-    }, []);
+        const messageData = client.subscriptions.receive()
+            .subscribe({
+                next: event => {
+                    console.log(event)
+                    const aiResponse: Message = {
+                        id: messages.length + 1,
+                        text: event.content,
+                        sender: 'ai',
+                        timestamp: new Date(),
+                    };
+                    setMessages(prevMessages => [...prevMessages, aiResponse]);
+                }
+            }
+            )
+        // Cleanup subscription on component unmount
+        return () => messageData.unsubscribe();
+    }, [messages]);
 
     const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -56,23 +73,23 @@ const ChatPage: React.FC = () => {
         //setError(null);
 
         try {
-            const { errors } = await client.queries.analyseAnswer({
+            await client.queries.analyseAnswer({
                 prompt: inputMessage,
             });
 
-            if (!errors) {
-                const aiResponse: Message = {
-                    id: messages.length + 1,
-                    text: "I'm sorry, I couldn't generate a response.",
-                    sender: 'ai',
-                    timestamp: new Date(),
-                };
-                setMessages(prevMessages => [...prevMessages, aiResponse]);
-                //generateSuggestions(inputMessage);
-            } else {
-                //setError("An error occurred while generating the response. Please try again.");
-                console.log(errors);
-            }
+            // if (!errors) {
+            //     const aiResponse: Message = {
+            //         id: messages.length + 1,
+            //         text: "I'm sorry, I couldn't generate a response.",
+            //         sender: 'ai',
+            //         timestamp: new Date(),
+            //     };
+            //     setMessages(prevMessages => [...prevMessages, aiResponse]);
+            //     //generateSuggestions(inputMessage);
+            // } else {
+            //     //setError("An error occurred while generating the response. Please try again.");
+            //     console.log(errors);
+            // }
         } catch (e) {
             console.error('Error in onSubmit:', e);
             //setError("An unexpected error occurred. Please try again.");
@@ -123,12 +140,12 @@ const ChatPage: React.FC = () => {
                                             {message.sender === 'user' ? 'U' : 'AI'}
                                         </Avatar>
                                     </ListItemAvatar>
-                                    <Paper elevation={1} sx={{ 
-                                        p: 2, 
-                                        maxWidth: '70%', 
+                                    <Paper elevation={1} sx={{
+                                        p: 2,
+                                        maxWidth: '70%',
                                         bgcolor: message.sender === 'user' ? 'primary.light' : 'background.paper'
                                     }}>
-                                        <ListItemText 
+                                        <ListItemText
                                             primary={message.text}
                                             secondary={message.timestamp.toLocaleTimeString()}
                                         />
@@ -151,9 +168,9 @@ const ChatPage: React.FC = () => {
                             variant="outlined"
                             InputProps={{
                                 endAdornment: (
-                                    <Button 
-                                        type="submit" 
-                                        variant="contained" 
+                                    <Button
+                                        type="submit"
+                                        variant="contained"
                                         disabled={loading || !inputMessage.trim()}
                                     >
                                         Send
@@ -168,7 +185,7 @@ const ChatPage: React.FC = () => {
                     <List>
                         {suggestions.map((suggestion, index) => (
                             <ListItem key={index} disablePadding>
-                                <ListItemText 
+                                <ListItemText
                                     primary={suggestion}
                                     primaryTypographyProps={{ variant: 'body2' }}
                                     sx={{ cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}

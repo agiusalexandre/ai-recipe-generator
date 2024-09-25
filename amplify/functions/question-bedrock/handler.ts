@@ -25,7 +25,7 @@ export const handler: Handler = async (event, context) => {
     ];
 
     const input = {
-        modelId: ANALYSE_ANSWER_MODEL_ID,
+        modelId: "anthropic.claude-3-haiku-20240307-v1:0",
         messages: conversation,
         inferenceConfig: {
             maxTokens: 1000,
@@ -45,6 +45,7 @@ export const handler: Handler = async (event, context) => {
                     channelName: "genai",
                     content: item.contentBlockDelta.delta?.text,
                 } ;
+                console.log(`Message: ${JSON.stringify(message)}`);
                 // @ts-ignore
                 await graphQLClient.mutations.publish(message);
             }

@@ -16,15 +16,16 @@ const schema = a.schema({
     })
     .returns(a.ref('Message'))
     .handler(a.handler.custom({ entry: './publish.js' }))
-    .authorization(allow => [allow.authenticated()]),
+    .authorization(allow => [allow.authenticated(), allow.publicApiKey()]),
 
+    
   receive: a.subscription()
     // subscribes to the 'publish' mutation
     .for(a.ref('publish'))
     // subscription handler to set custom filters
     .handler(a.handler.custom({ entry: './receive.js' }))
     // authorization rules as to who can subscribe to the data
-    .authorization(allow => [allow.authenticated()]),
+    .authorization(allow => [allow.authenticated(), allow.publicApiKey()]),
 
   Message: a.customType({
     content: a.string().required(),
