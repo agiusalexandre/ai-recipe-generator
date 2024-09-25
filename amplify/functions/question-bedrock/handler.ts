@@ -4,7 +4,8 @@ import {
 } from "@aws-sdk/client-bedrock-runtime";
 import { generateClient } from 'aws-amplify/data';
 import { Amplify } from "aws-amplify";
-import amplifyConfig from "../../../amplify_outputs.json";
+import amplifyConfig from '../../../amplify_outputs.json';
+
 import {Schema} from "../../data/resource";
 
 
