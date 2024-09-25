@@ -4,7 +4,7 @@ import {
 } from "@aws-sdk/client-bedrock-runtime";
 import { generateClient } from 'aws-amplify/data';
 import { Amplify } from "aws-amplify";
-import amplifyConfig from '../../../amplify_outputs.json';
+import amplifyConfig from "../../../amplify_outputs.json";
 import {Schema} from "../../data/resource";
 
 
@@ -25,7 +25,7 @@ export const handler: Handler = async (event, context) => {
     ];
 
     const input = {
-        modelId: "anthropic.claude-3-haiku-20240307-v1:0",
+        modelId: ANALYSE_ANSWER_MODEL_ID,
         messages: conversation,
         inferenceConfig: {
             maxTokens: 1000,
