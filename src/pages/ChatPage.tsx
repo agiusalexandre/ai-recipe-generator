@@ -1,4 +1,4 @@
-import React, { FormEvent, useState, useEffect } from "react";
+import React, { FormEvent, useState, useEffect, useRef } from "react";
 import {
     Box,
     Button,
@@ -46,47 +46,37 @@ export function useMessages() {
     const [messages, setMessages] = useState<Message[]>([]);
 
     useEffect(() => {
-        let currentMessage: Message | null = null;
-        let accumulatedContent = '';
+        let currentMessageId: string | null = null;
 
         const messageData = client.subscriptions.receive().subscribe({
             next: (event: { content: string }) => {
                 console.log(event.content);
 
                 if (event.content === 'stop_publish') {
-                    if (accumulatedContent) {
-                        const newMessage: Message = {
-                            id: uuidv4(),
-                            text: accumulatedContent,
-                            sender: 'ai',
-                            timestamp: new Date(),
-                            complete: true,
-                        };
-
-                        setMessages(prevMessages => [...prevMessages, newMessage]);
-                        accumulatedContent = ''; // Reset accumulated content
-                    }
+                    setMessages(prevMessages =>
+                        prevMessages.map(msg =>
+                            msg.id === currentMessageId ? { ...msg, complete: true } : msg
+                        )
+                    );
+                    currentMessageId = null;
                 } else {
-                    accumulatedContent += event.content;
-
-                    // Update the current message in state to show progress
                     setMessages(prevMessages => {
-                        if (currentMessage) {
+                        if (currentMessageId) {
                             return prevMessages.map(msg =>
-                                //@ts-ignore
-                                msg.id === currentMessage.id
-                                    ? { ...msg, text: accumulatedContent, complete: false }
+                                msg.id === currentMessageId
+                                    ? { ...msg, text: msg.text + event.content }
                                     : msg
                             );
                         } else {
-                            currentMessage = {
+                            const newMessage: Message = {
                                 id: uuidv4(),
-                                text: accumulatedContent,
+                                text: event.content,
                                 sender: 'ai',
                                 timestamp: new Date(),
                                 complete: false,
                             };
-                            return [...prevMessages, currentMessage];
+                            currentMessageId = newMessage.id;
+                            return [...prevMessages, newMessage];
                         }
                     });
                 }
@@ -94,7 +84,7 @@ export function useMessages() {
         });
 
         return () => messageData.unsubscribe();
-    }, [client]);
+    }, []);
 
     return { messages, setMessages };
 }
@@ -160,16 +150,33 @@ const handleSubmit = async (
     }
 };
 
+const TypingIndicator: React.FC = () => (
+    <Box sx={{ display: 'flex', justifyContent: 'flex-start', p: 2 }}>
+        <CircularProgress size={20} />
+        <Typography variant="body2" sx={{ ml: 1 }}>AI is typing...</Typography>
+    </Box>
+);
+
 const ChatPage: React.FC = () => {
     const { messages, setMessages } = useMessages();
     const inputProps = useInput("");
     const [loading, setLoading] = useState(false);
     const [selectedExpert, setSelectedExpert] = useState<AIExpert | null>(AI_EXPERTS[0]);
     const [suggestions] = useState<string[]>([]);
+    const [isTyping, setIsTyping] = useState(false);
+    const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
     useEffect(() => {
         setSelectedExpert(AI_EXPERTS[0]);
     }, []);
+
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
+
+    useEffect(() => {
+        setIsTyping(messages.some(msg => !msg.complete && msg.sender === 'ai'));
+    }, [messages]);
 
     const onSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -194,11 +201,8 @@ const ChatPage: React.FC = () => {
                 <Grid item xs={12} md={9} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                     <Box sx={{ flexGrow: 1, overflowY: 'auto', p: 2 }}>
                         <MessageList messages={messages} selectedExpert={selectedExpert} />
-                        {loading && (
-                            <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-                                <CircularProgress />
-                            </Box>
-                        )}
+                        {isTyping && <TypingIndicator />}
+                        <div ref={messagesEndRef} />
                     </Box>
                     <Box component="form" onSubmit={onSubmit} sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}>
                         <TextField
