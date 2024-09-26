@@ -1,119 +1,180 @@
 import React, { FormEvent, useState, useEffect } from "react";
-import { Box, Button, TextField, Typography, Paper, CircularProgress, Avatar, Grid, List, ListItem, ListItemText, ListItemAvatar } from "@mui/material";
+import {
+    Box,
+    Button,
+    TextField,
+    Typography,
+    Paper,
+    CircularProgress,
+    Avatar,
+    Grid,
+    List,
+    ListItem,
+    ListItemText,
+    ListItemAvatar,
+} from "@mui/material";
 import { Schema } from "../../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
+import { v4 as uuidv4 } from 'uuid';
 
 const client = generateClient<Schema>({
     authMode: "userPool",
 });
 
-
 interface Message {
-    id: number;
+    id: string;
     text: string;
     sender: 'user' | 'ai';
     timestamp: Date;
+    complete: boolean;
 }
 
 interface AIExpert {
-    id: number;
+    id: string;
     name: string;
     avatar: string;
     expertise: string;
 }
 
-const ChatPage: React.FC = () => {
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [inputMessage, setInputMessage] = useState("");
-    const [loading, setLoading] = useState(false);
-    //const [error, setError] = useState<string | null>(null);
-    const [selectedExpert, setSelectedExpert] = useState<AIExpert | null>(null);
-    const [suggestions] = useState<string[]>([]);
+const AI_EXPERTS: AIExpert[] = [
+    { id: uuidv4(), name: "Vehicle Expert", avatar: "/avatars/vehicle-expert.png", expertise: "General vehicle knowledge" },
+    { id: uuidv4(), name: "Car Mechanic", avatar: "/avatars/car-mechanic.png", expertise: "Car maintenance and repair" },
+    { id: uuidv4(), name: "Green Vehicle Specialist", avatar: "/avatars/green-specialist.png", expertise: "Electric and hybrid vehicles" },
+];
 
-    const aiExperts: AIExpert[] = [
-        { id: 1, name: "Vehicle Expert", avatar: "/avatars/vehicle-expert.png", expertise: "General vehicle knowledge" },
-        { id: 2, name: "Car Mechanic", avatar: "/avatars/car-mechanic.png", expertise: "Car maintenance and repair" },
-        { id: 3, name: "Green Vehicle Specialist", avatar: "/avatars/green-specialist.png", expertise: "Electric and hybrid vehicles" },
-    ];
+export function useMessages() {
+    const [messages, setMessages] = useState<Message[]>([]);
 
     useEffect(() => {
-        setSelectedExpert(aiExperts[0]);
-        const messageData = client.subscriptions.receive()
-            .subscribe({
-                next: event => {
-                    console.log(event)
-                    const aiResponse: Message = {
-                        id: messages.length + 1,
-                        text: event.content,
-                        sender: 'ai',
-                        timestamp: new Date(),
-                    };
-                    setMessages(prevMessages => [...prevMessages, aiResponse]);
+        let currentMessage: Message | null = null;
+        let accumulatedContent = '';
+
+        const messageData = client.subscriptions.receive().subscribe({
+            next: (event: { content: string }) => {
+                console.log(event.content);
+
+                if (event.content === 'stop_publish') {
+                    if (accumulatedContent) {
+                        const newMessage: Message = {
+                            id: uuidv4(),
+                            text: accumulatedContent,
+                            sender: 'ai',
+                            timestamp: new Date(),
+                            complete: true,
+                        };
+
+                        setMessages(prevMessages => [...prevMessages, newMessage]);
+                        accumulatedContent = ''; // Reset accumulated content
+                    }
+                } else {
+                    accumulatedContent += event.content;
+
+                    // Update the current message in state to show progress
+                    setMessages(prevMessages => {
+                        if (currentMessage) {
+                            return prevMessages.map(msg =>
+                                //@ts-ignore
+                                msg.id === currentMessage.id
+                                    ? { ...msg, text: accumulatedContent, complete: false }
+                                    : msg
+                            );
+                        } else {
+                            currentMessage = {
+                                id: uuidv4(),
+                                text: accumulatedContent,
+                                sender: 'ai',
+                                timestamp: new Date(),
+                                complete: false,
+                            };
+                            return [...prevMessages, currentMessage];
+                        }
+                    });
                 }
-            }
-            )
-        // Cleanup subscription on component unmount
+            },
+        });
+
         return () => messageData.unsubscribe();
-    }, [messages]);
+    }, [client]);
 
-    const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        if (!inputMessage.trim()) return;
+    return { messages, setMessages };
+}
 
-        const newUserMessage: Message = {
-            id: messages.length,
-            text: inputMessage,
-            sender: 'user',
-            timestamp: new Date(),
-        };
+const MessageList: React.FC<{ messages: Message[], selectedExpert: AIExpert | null }> = ({ messages, selectedExpert }) => (
+    <List>
+        {messages.map((message) => (
+            <ListItem key={message.id} sx={{ flexDirection: message.sender === 'user' ? 'row-reverse' : 'row' }}>
+                <ListItemAvatar>
+                    <Avatar src={message.sender === 'ai' ? selectedExpert?.avatar : undefined}>
+                        {message.sender === 'user' ? 'U' : 'AI'}
+                    </Avatar>
+                </ListItemAvatar>
+                <Paper elevation={1} sx={{
+                    p: 2,
+                    maxWidth: '70%',
+                    bgcolor: message.sender === 'user' ? 'primary.light' : 'background.paper'
+                }}>
+                    <ListItemText
+                        primary={message.text}
+                        secondary={message.timestamp ? message.timestamp.toLocaleTimeString() : "Time not available"}
+                    />
+                </Paper>
+            </ListItem>
+        ))}
+    </List>
+);
 
-        setMessages(prevMessages => [...prevMessages, newUserMessage]);
-        setInputMessage("");
-        setLoading(true);
-        //setError(null);
+const useInput = (initialValue: string) => {
+    const [value, setValue] = useState(initialValue);
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value);
+    return { value, onChange, setValue };
+};
 
-        try {
-            await client.queries.analyseAnswer({
-                prompt: inputMessage,
-            });
+const handleSubmit = async (
+    inputMessage: string,
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
+    setInputMessage: (value: string) => void,
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>
+) => {
+    if (!inputMessage.trim()) return;
 
-            // if (!errors) {
-            //     const aiResponse: Message = {
-            //         id: messages.length + 1,
-            //         text: "I'm sorry, I couldn't generate a response.",
-            //         sender: 'ai',
-            //         timestamp: new Date(),
-            //     };
-            //     setMessages(prevMessages => [...prevMessages, aiResponse]);
-            //     //generateSuggestions(inputMessage);
-            // } else {
-            //     //setError("An error occurred while generating the response. Please try again.");
-            //     console.log(errors);
-            // }
-        } catch (e) {
-            console.error('Error in onSubmit:', e);
-            //setError("An unexpected error occurred. Please try again.");
-        } finally {
-            setLoading(false);
-        }
+    const newUserMessage: Message = {
+        id: uuidv4(),
+        text: inputMessage,
+        sender: 'user',
+        timestamp: new Date(),
+        complete: true,
     };
 
-    // const handleClear = () => {
-    //     setMessages([]);
-    //     setInputMessage("");
-    //     //setError(null);
-    //     setSuggestions([]);
-    // };
+    setMessages(prevMessages => [...prevMessages, newUserMessage]);
+    setInputMessage("");
+    setLoading(true);
 
-    // const generateSuggestions = (message: string) => {
-    //     // This is a placeholder. In a real application, you would use a more sophisticated method to generate suggestions.
-    //     const dummySuggestions = [
-    //         "Tell me more about electric vehicles",
-    //         "What are the best practices for car maintenance?",
-    //         "How can I improve my vehicle's fuel efficiency?",
-    //     ];
-    //     setSuggestions(dummySuggestions);
-    // };
+    try {
+        await client.queries.analyseAnswer({
+            prompt: inputMessage,
+        });
+    } catch (e) {
+        console.error('Error in onSubmit:', e);
+    } finally {
+        setLoading(false);
+    }
+};
+
+const ChatPage: React.FC = () => {
+    const { messages, setMessages } = useMessages();
+    const inputProps = useInput("");
+    const [loading, setLoading] = useState(false);
+    const [selectedExpert, setSelectedExpert] = useState<AIExpert | null>(AI_EXPERTS[0]);
+    const [suggestions] = useState<string[]>([]);
+
+    useEffect(() => {
+        setSelectedExpert(AI_EXPERTS[0]);
+    }, []);
+
+    const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        handleSubmit(inputProps.value, setMessages, inputProps.setValue, setLoading);
+    };
 
     return (
         <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -132,27 +193,7 @@ const ChatPage: React.FC = () => {
             <Grid container sx={{ flexGrow: 1, overflow: 'hidden' }}>
                 <Grid item xs={12} md={9} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                     <Box sx={{ flexGrow: 1, overflowY: 'auto', p: 2 }}>
-                        <List>
-                            {messages.map((message) => (
-                                <ListItem key={message.id} sx={{ flexDirection: message.sender === 'user' ? 'row-reverse' : 'row' }}>
-                                    <ListItemAvatar>
-                                        <Avatar src={message.sender === 'ai' ? selectedExpert?.avatar : undefined}>
-                                            {message.sender === 'user' ? 'U' : 'AI'}
-                                        </Avatar>
-                                    </ListItemAvatar>
-                                    <Paper elevation={1} sx={{
-                                        p: 2,
-                                        maxWidth: '70%',
-                                        bgcolor: message.sender === 'user' ? 'primary.light' : 'background.paper'
-                                    }}>
-                                        <ListItemText
-                                            primary={message.text}
-                                            secondary={message.timestamp.toLocaleTimeString()}
-                                        />
-                                    </Paper>
-                                </ListItem>
-                            ))}
-                        </List>
+                        <MessageList messages={messages} selectedExpert={selectedExpert} />
                         {loading && (
                             <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
                                 <CircularProgress />
@@ -162,8 +203,7 @@ const ChatPage: React.FC = () => {
                     <Box component="form" onSubmit={onSubmit} sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}>
                         <TextField
                             fullWidth
-                            value={inputMessage}
-                            onChange={(e) => setInputMessage(e.target.value)}
+                            {...inputProps}
                             placeholder="Type your message here"
                             variant="outlined"
                             InputProps={{
@@ -171,7 +211,7 @@ const ChatPage: React.FC = () => {
                                     <Button
                                         type="submit"
                                         variant="contained"
-                                        disabled={loading || !inputMessage.trim()}
+                                        disabled={loading || !inputProps.value.trim()}
                                     >
                                         Send
                                     </Button>
@@ -185,12 +225,7 @@ const ChatPage: React.FC = () => {
                     <List>
                         {suggestions.map((suggestion, index) => (
                             <ListItem key={index} disablePadding>
-                                <ListItemText
-                                    primary={suggestion}
-                                    primaryTypographyProps={{ variant: 'body2' }}
-                                    sx={{ cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
-                                    onClick={() => setInputMessage(suggestion)}
-                                />
+                                <ListItemText primary={suggestion} />
                             </ListItem>
                         ))}
                     </List>
