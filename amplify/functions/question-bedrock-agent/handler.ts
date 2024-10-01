@@ -10,7 +10,6 @@ interface Event {
     actionGroup: string;
     function: string;
     parameters: Parameter[];
-    messageVersion?: string;
     sessionAttributes: any;
     promptSessionAttributes: any;
 }
@@ -30,7 +29,6 @@ interface ActionResponse {
 }
 
 interface LambdaResponse {
-    messageVersion: string;
     response: ActionResponse;
     sessionAttributes: any;
     promptSessionAttributes: any;
@@ -65,10 +63,6 @@ async function callBedrockAgent(prompt: string): Promise<string> {
 export async function lambdaHandler(event: Event): Promise<LambdaResponse> {
     const { agent, actionGroup, function: functionName, parameters = [] } = event;
 
-    if (!event.messageVersion) {
-        throw new Error("The 'messageVersion' key is missing in the event object");
-    }
-
     console.log(`Received event: ${JSON.stringify(event)}`);
 
     //const prompt = `Analyze the following vehicle information and provide insights: ${JSON.stringify(parameters)}`;
@@ -92,7 +86,6 @@ export async function lambdaHandler(event: Event): Promise<LambdaResponse> {
     };
 
     const lambdaResponse: LambdaResponse = {
-        messageVersion: '1.0',
         response: actionResponse,
         sessionAttributes: event.sessionAttributes,
         promptSessionAttributes: event.promptSessionAttributes
