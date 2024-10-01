@@ -12,7 +12,7 @@ const backend = defineBackend({
   data,
   firstBucket,
   questionEngineFunction,
-  bedrockAgentDamageMatrix
+  bedrockAgentDamageMatrix,
 });
 
 backend.questionEngineFunction.resources.lambda.grantPrincipal.addToPrincipalPolicy(
