@@ -157,6 +157,20 @@
             }
           }
         },
+        "analyseAgentAnswer": {
+          "name": "analyseAgentAnswer",
+          "isArray": false,
+          "type": "String",
+          "isRequired": false,
+          "arguments": {
+            "prompt": {
+              "name": "prompt",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true
+            }
+          }
+        },
         "askBedrock": {
           "name": "askBedrock",
           "isArray": false,

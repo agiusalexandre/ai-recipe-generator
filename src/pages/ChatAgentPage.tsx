@@ -140,7 +140,7 @@ const handleSubmit = async (
     setLoading(true);
 
     try {
-        await client.queries.analyseAnswer({
+        await client.queries.analyseAgentAnswer({
             prompt: inputMessage,
         });
     } catch (e) {
