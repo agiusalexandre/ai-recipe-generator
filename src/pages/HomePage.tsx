@@ -53,7 +53,7 @@ const HomePage: React.FC = () => {
                 </Typography>
             </Typography>
             <Typography variant="body1" sx={{ mb: 3, color: 'text.secondary' }}>
-                Simply type a few vehicule information, and Vehicule AI will generate recommandation just for you!
+                Simply type a few vehicle information, and Vehicle AI will generate recommendations just for you! You can also chat with our AI agent for more personalized assistance.
             </Typography>
             <Box component="form" onSubmit={onSubmit} sx={{ mb: 4 }}>
                 <TextField
@@ -88,7 +88,7 @@ const HomePage: React.FC = () => {
                             transition: 'all 0.3s'
                         }}
                     >
-                        {loading ? 'Generating...' : 'Generate Recommandations'}
+                        {loading ? 'Generating...' : 'Generate Recommendations'}
                     </Button>
                     <Button
                         type="button"
