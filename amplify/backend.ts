@@ -5,14 +5,14 @@ import { PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { auth } from "./auth/resource";
 import { Stack } from 'aws-cdk-lib';
 import { questionEngineFunction } from "./functions/question-bedrock/resource";
-import { bedrockAgentDamageMatrix } from "./functions/question-bedrock-agent/resource"
+import { bedrockAgentDamageMatrixFunction } from "./functions/question-bedrock-agent/resource"
 
 const backend = defineBackend({
   auth,
   data,
   firstBucket,
   questionEngineFunction,
-  bedrockAgentDamageMatrix,
+  bedrockAgentDamageMatrixFunction
 });
 
 backend.questionEngineFunction.resources.lambda.grantPrincipal.addToPrincipalPolicy(
@@ -25,7 +25,7 @@ backend.questionEngineFunction.resources.lambda.grantPrincipal.addToPrincipalPol
   })
 );
 
-backend.bedrockAgentDamageMatrix.resources.lambda.grantPrincipal.addToPrincipalPolicy(
+backend.bedrockAgentDamageMatrixFunction.resources.lambda.grantPrincipal.addToPrincipalPolicy(
   new PolicyStatement({
     resources: [
       "*",

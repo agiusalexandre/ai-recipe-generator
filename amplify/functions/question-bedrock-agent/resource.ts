@@ -1,6 +1,6 @@
 import {defineFunction} from '@aws-amplify/backend';
 
-export const bedrockAgentDamageMatrix = defineFunction({
+export const bedrockAgentDamageMatrixFunction = defineFunction({
     name: 'question-bedrock-agent',
     entry: "./handler.ts",
     timeoutSeconds: 300,

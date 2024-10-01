@@ -1,5 +1,6 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 import { questionEngineFunction } from "../functions/question-bedrock/resource"
+import { bedrockAgentDamageMatrixFunction } from "../functions/question-bedrock-agent/resource"
 const schema = a.schema({
 
   analyseAnswer: a
@@ -8,6 +9,13 @@ const schema = a.schema({
     .returns(a.string())
     .authorization((allow) => [allow.authenticated()])
     .handler(a.handler.function(questionEngineFunction)),
+
+  analyseAgentAnswer: a
+    .query()
+    .arguments({ prompt: a.string().required() })
+    .returns(a.string())
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(bedrockAgentDamageMatrixFunction)),
 
   publish: a.mutation()
     .arguments({
@@ -18,7 +26,7 @@ const schema = a.schema({
     .handler(a.handler.custom({ entry: './publish.js' }))
     .authorization(allow => [allow.authenticated(), allow.publicApiKey()]),
 
-    
+
   receive: a.subscription()
     // subscribes to the 'publish' mutation
     .for(a.ref('publish'))
