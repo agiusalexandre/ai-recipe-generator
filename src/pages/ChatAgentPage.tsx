@@ -49,10 +49,10 @@ export function useMessages() {
         let currentMessageId: string | null = null;
 
         const messageData = client.subscriptions.receive().subscribe({
-            next: (event: { content: string }) => {
+            next: (event: { content: string, channelName: string }) => {
                 console.log(event.content);
 
-                if (event.content === 'stop_publish') {
+                if (event.content === 'stop_publish' && event.channelName === 'genaiagent') {
                     setMessages(prevMessages =>
                         prevMessages.map(msg =>
                             msg.id === currentMessageId ? { ...msg, complete: true } : msg
