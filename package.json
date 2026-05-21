@@ -22,7 +22,7 @@
     "@smithy/node-config-provider": "^3.1.7",
     "@smithy/shared-ini-file-loader": "^3.1.7",
     "aws-amplify": "^6.6.0",
-    "langchain": "^0.3.2",
+    "langchain": "^1.4.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.2",
@@ -36,9 +36,9 @@
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "aws-cdk": "^2.158.0",
-    "aws-cdk-lib": "^2.158.0",
+    "aws-cdk-lib": "^2.189.1",
     "constructs": "^10.3.0",
-    "esbuild": "^0.23.1",
+    "esbuild": "^0.25.0",
     "eslint": "^9.9.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
@@ -46,6 +46,6 @@
     "tsx": "^4.19.1",
     "typescript": "^5.6.2",
     "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1"
+    "vite": "^6.4.2"
   }
 }
